@@ -1,5 +1,5 @@
 modellist = [
   "naive-bayes",
-  # "normal-loc",
+  "normal-loc",
   # "normal-mixture"
 ]
