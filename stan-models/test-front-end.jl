@@ -1,6 +1,6 @@
 using Turing
 
-include("modellist.jl")
+include("config.jl")
 
 for model in modellist
   include("$model/model.jl")
