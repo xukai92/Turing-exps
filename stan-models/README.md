@@ -1,3 +1,7 @@
 # Stan models implemented in Turing
 
-Front-end test can be run by `julia test-front-end.jl`
+## Tests
+
+Settings for test are defined in `config.jl`.
+
+Test can be run by `julia test.jl`
