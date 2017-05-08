@@ -8,7 +8,11 @@ samples2visdata(samples) = begin
 
   # Convert θ from array-of-array to matrix
   θarr = mean(samples[:θ])
-  θ = reduce((a, b) -> cat(1, a, b'), Matrix{Float64}(0, 2), θarr)
+  if length(θarr) == topicdata["M"]
+    θ = reduce((a, b) -> cat(1, a, b'), Matrix{Float64}(0, topicdata["K"]), θarr)
+  else
+    θ = repmat(θarr', topicdata["M"], 1)
+  end
 
   # Build a vector storing lengths of docs for vis
   doclist = topicdata["doc"]
