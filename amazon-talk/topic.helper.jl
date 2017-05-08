@@ -11,21 +11,21 @@ samples2visdata(samples) = begin
   θ = reduce((a, b) -> cat(1, a, b'), Matrix{Float64}(0, 2), θarr)
 
   # Build a vector storing lengths of docs for vis
-  doclist = ldadata["doc"]
+  doclist = topicdata["doc"]
   docldict = reduce((a, b) -> if haskey(a, b) a[b] += 1; a else a[b] = 1; a end, Dict(), doclist)
-  docls = map(i -> docldict[i], 1:ldadata["M"])
+  docls = map(i -> docldict[i], 1:topicdata["M"])
 
   # Build a vector of word frequencies for vis
-  wordlist = ldadata["w"]
+  wordlist = topicdata["w"]
   freqdict = reduce((a, b) -> if haskey(a, b) a[b] += 1; a else a[b] = 1; a end, Dict(), wordlist)
-  freq = map(i -> freqdict[i], 1:ldadata["V"])
+  freq = map(i -> freqdict[i], 1:topicdata["V"])
 
   # Save result for vis
   ldaresult = Dict(
       "topic_term_dists" => ϕ',
       "doc_topic_dist" => θ',
       "doc_lengths" => docls,
-      "vocab" => 1:ldadata["V"],
+      "vocab" => 1:topicdata["V"],
       "term_frequency" => freq
   )
 end

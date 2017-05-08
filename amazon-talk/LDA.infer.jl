@@ -27,7 +27,7 @@ include("topic.data.jl");
 
   z = tzeros(Int, N)    # Turing-safe array
   for n = 1:N
-    z[n] ~ Categorical(θ[doc[n]])
+    z[n] ~ Categorical(θ[doc[n]])   # z here is unkown
   end
 
   for n = 1:N
@@ -35,8 +35,8 @@ include("topic.data.jl");
   end
 end
 
-# Collect 1000 samples using NUTS
-samples = sample(LDA(data=ldadata), NUTS(250, 0.65))
+# Collect 1000 samples using HMC with Dual Averaging
+samples = sample(LDA(data=topicdata), Gibbs(250, PG(50, 1, :z), HMCDA(100, 0.1, 0.3, :θ, :ϕ)))
 
 # Samples can be got and used like below
 ϕs = samples[:ϕ][1:200]   # fetch first 200 samples for ϕ
