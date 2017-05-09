@@ -38,16 +38,16 @@ using Gadfly
 using DataFrames
 Gadfly.push_theme(:dark)
 
-makerectbinplot(samples, fn) = begin
+makerectbinplot(samples, i, fn) = begin
   K = topicdata["K"]
   V = topicdata["V"]
 
-  ϕarr = mean(samples[:ϕ])
+  ϕarr = samples[:ϕ][i]
   ϕ = [ϕarr[1]'; ϕarr[2]']
 
   df = DataFrame(Topic = vec(repmat(collect(1:K)', V, 1)), Word = vec(repmat(collect(1:V)', 1, K)), Probability = vec(ϕ))
 
   p = plot(df,x=:Word, y=:Topic, color=:Probability, Geom.rectbin)
 
-  draw(PNG("$fn.png", 6inch, 4.5inch), p)
+  draw(PNG("$fn$i.png", 6inch, 4.5inch), p)
 end

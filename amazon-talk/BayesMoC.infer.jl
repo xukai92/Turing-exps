@@ -46,9 +46,11 @@ samples = sample(BayesMoC(data=topicdata), Gibbs(1000, PG(50, 1, :z), HMCDA(100,
 # Save result for vis
 include("topic.helper.jl")
 
-ldaresult = samples2visdata(samples)
-open("/home/kai/projects/Turing-exps/amazon-talk/BayesMoC.result.json", "w") do f
-    JSON.print(f, ldaresult)
-end
+# ldaresult = samples2visdata(samples)
+# open("/home/kai/projects/Turing-exps/amazon-talk/BayesMoC.result.json", "w") do f
+#     JSON.print(f, ldaresult)
+# end
 
-makerectbinplot(samples, "BayesMoC")
+for i = 1:length(samples[:ϕ])
+  makerectbinplot(samples, i, "frames/BayesMoC")
+end
