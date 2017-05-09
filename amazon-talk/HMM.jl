@@ -1,7 +1,7 @@
 # Load packages
 using Distributions, Turing
 
-# Load dataset
+# Load toy dataset
 include("timeseries.data.jl")
 
 # Compute initial state (initial), transition matrix (T)
