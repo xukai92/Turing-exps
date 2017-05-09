@@ -1,18 +1,17 @@
-using Distributions
-using Turing
-using PyPlot, PyCall
-@pyimport matplotlib.animation as animation
-plt["style"]["use"]("ggplot")
+# Load packages
+using Distributions, Turing
 
+# Load toy dataset
 include("timeseries.data.jl")
 
+# Define a Bayesian Hidden Markov Model model with parameters:
+#   N   -   number of observations
+#   K   -   number of states
+#   y   -   observations
 @model BayesHMM(N, K, y) = begin
-    s = tzeros(Int, N)
-    m = tzeros(Real, K)
-    T = Vector{Vector{Real}}(K)
+    s = tzeros(Int, N); m = tzeros(Real, K); T = Vector{Vector{Real}}(K)
     for i = 1:K
         T[i] ~ Dirichlet(ones(K)/K)
-        # m[i] ~ Normal(1, 0.1) # Defining m this way causes label-switching problem.
         m[i] ~ Normal(i, 1)
     end
     s[1] ~ Categorical(ones(Float64, K)/K)
@@ -22,8 +21,22 @@ include("timeseries.data.jl")
     end
 end
 
-g = Gibbs(300, HMC(1, 0.2, 5, :m, :T), PG(50, 1, :s))
-samples = sample(BayesHMM(N, K, y), g);
+# Collect 500 samples using a compositional Gibbs sampler which combines
+# - Hamiltonian Monte Carlo for continuous variables m and T
+#   * step-size 0.2 and step-length 5 for HMC; 1 iteration in each Gibbs
+# - Particle Gibbs for discrete variable s
+#   * 50 particles are used for PG; 1 iteration in each Gibbs
+samples = sample(
+  BayesHMM(N, K, y),
+  Gibbs(300, HMC(1, 0.2, 5, :m, :T), PG(50, 1, :s))
+)
+
+
+
+
+
+
+
 
 # ms = c[:m];
 # ss = c[:s];
@@ -38,7 +51,9 @@ samples = sample(BayesHMM(N, K, y), g);
 
 # Output animation
 
-
+using PyPlot, PyCall
+@pyimport matplotlib.animation as animation
+plt["style"]["use"]("ggplot")
 
 fig, ax = plt[:subplots]();
 ax[:set_xlim](( 0, N))
