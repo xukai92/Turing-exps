@@ -28,7 +28,7 @@ end
 #   * 50 particles are used for PG; 1 iteration in each Gibbs
 samples = sample(
   BayesHMM(N, K, y),
-  Gibbs(300, HMC(1, 0.2, 5, :m, :T), PG(50, 1, :s))
+  Gibbs(500, HMC(1, 0.2, 5, :m, :T), PG(50, 1, :s))
 )
 
 

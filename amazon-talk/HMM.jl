@@ -29,7 +29,7 @@ m = (collect(1.0:K)*2-K)*2
 end
 
 # Collect 500 samples using the Particle Gibbs sampler (50 particles used)
-samples = sample(HMM(N, K, y, T, m), PG(50, 10));
+samples = sample(HMM(N, K, y, T, m), PG(50, 500));
 
 
 
