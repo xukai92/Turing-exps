@@ -29,19 +29,20 @@ m = (collect(1.0:K)*2-K)*2
 end
 
 # Collect 500 samples using the Particle Gibbs sampler (50 particles used)
-samples = sample(HMM(N, K, y, T, m), PG(50, 500));
+samples = sample(HMM(N, K, y, T, m), PG(50, 10));
 
 
 
-# Visualization
+#####################################
+# Below are codes for visualization #
+#####################################
 using PyPlot, PyCall
 @pyimport matplotlib.animation as animation
 plt["style"]["use"]("ggplot")
 
 # Animation set-up
-fig, ax = plt[:subplots]();
-ax[:set_xlim](( 0, N))
-ax[:set_ylim]((-20, 20))
+fig, ax = plt[:subplots]()
+ax[:set_xlim](( 0, N)); ax[:set_ylim]((-20, 20))
 line, = ax[:plot]([], [], lw=2)
 
 # Initialization function: plot the background of each frame
