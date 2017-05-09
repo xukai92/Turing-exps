@@ -19,7 +19,7 @@ m = (collect(1.0:K)*2-K)*2
     end
 end
 
-samples = sample(HMM(N, K, y, T, m), PG(50, 1000));
+samples = sample(HMM(N, K, y, T, m), PG(50, 2000));
 
 # m = samples[:m][111];
 s = mean(samples[:s]);

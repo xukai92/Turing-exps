@@ -1,4 +1,5 @@
 using Gadfly
+Gadfly.push_theme(:dark)
 
 plottimeseries(y, yt, fn) = begin
   p_layer = layer(x=1:N, y=y, Geom.point, Theme(default_color=colorant"royalblue"))
