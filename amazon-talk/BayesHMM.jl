@@ -33,23 +33,9 @@ samples = sample(
 
 
 
-
-
-
-
-
-# ms = c[:m];
-# ss = c[:s];
-#
-# yt = mean(map(i -> ms[i][ss[i]], 1:N))
-
-# include("timeseries.vis.jl")
-#
-# plottimeseries(y, yt, "BayesHMM")
-
-# Output animation
-
-# Output animation
+#####################################
+# Below are codes for visualization #
+#####################################
 
 using PyPlot, PyCall
 @pyimport matplotlib.animation as animation

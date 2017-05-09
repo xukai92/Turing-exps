@@ -1,27 +1,15 @@
-# Load packages for inference
-using Distributions
-using Turing
+using Distributions, Turing   # load packages
+include("topic.data.jl")      # load toy dataset
 
-# Load toy dataset
-include("topic.data.jl");
-
-# Define the Bayesian Mixture of Categorical (BayesMoC) model as
-#
-#            θ ~ Dir(α)
-#           ϕₖ ~ Dir(β)
-#         zₘ|Θ ~ Cat(θ)
-#     Wₙₘ|zₘ,β ~ Cat(β_zₘ)
-#
-# with parameters below
-#
-#   K   - topic num
-#   V   - vocabulary
-#   M   - doc num
-#   N   - total number of words models more similar
-#   w   - word instances
-#   doc - doc instances
-#   β   - topic prior
-#   α   - word prior
+# Define the Bayesian Mixture of Categorical (BayesMoC) model
+#   K   - topic num         ||
+#   V   - vocabulary        ||             Model
+#   M   - doc num           ||
+#   N   - number of words   ||            θ ~ Dir(α)
+#   w   - word instances    ||           ϕₖ ~ Dir(β)
+#   doc - doc instances     ||         zₘ|Θ ~ Cat(θ)
+#   β   - topic prior       ||     Wₙₘ|zₘ,β ~ Cat(β_zₘ)
+#   α   - word prior        ||
 @model BayesMoC(K, V, M, N, w, doc, β, α) = begin
   θ ~ Dirichlet(α)
 
@@ -40,8 +28,20 @@ include("topic.data.jl");
   end
 end
 
-# Collect 1000 samples using NUTS
-samples = sample(BayesMoC(data=topicdata), Gibbs(1000, PG(50, 1, :z), HMCDA(100, 0.1, 0.3, :θ, :ϕ)))
+# Collect 1000 samples using a compositional Gibbs sampler which combines
+# - Hamiltonian Monte Carlo with Dual Averaging for θ and ϕ
+#   * step-size 0.1 and length 0.3 for HMCdA; 1 iteration in each Gibbs
+# - Particle Gibbs for discrete variable s
+#   * 50 particles are used for PG; 1 iteration in each Gibbs
+samples = sample(
+  BayesMoC(data=topicdata),
+  Gibbs(1000, PG(50, 1, :z), HMCDA(100, 0.1, 0.3, :θ, :ϕ))
+)
+
+
+#####################################
+# Below are codes for visualization #
+#####################################
 
 # Save result for vis
 include("topic.helper.jl")

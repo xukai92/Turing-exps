@@ -1,9 +1,5 @@
-# Load packages for inference
-using Distributions
-using Turing
-
-# Load toy dataset
-include("topic.data.jl");
+using Distributions, Turing   # load packages
+include("topic.data.jl")      # load toy dataset
 
 # Define the LDA model with parameters:
 #   K   - topic num
@@ -36,7 +32,16 @@ include("topic.data.jl");
 end
 
 # Collect 1000 samples using HMC with Dual Averaging
-samples = sample(LDA(data=topicdata), Gibbs(1000, PG(50, 1, :z), HMCDA(100, 0.1, 0.3, :θ, :ϕ)))
+samples = sample(
+  LDA(data=topicdata),
+  Gibbs(1000, PG(50, 1, :z), HMCDA(100, 0.1, 0.3, :θ, :ϕ))
+)
+
+
+
+#####################################
+# Below are codes for visualization #
+#####################################
 
 # Samples can be got and used like below
 ϕs = samples[:ϕ][1:200]   # fetch first 200 samples for ϕ

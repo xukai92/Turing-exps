@@ -36,6 +36,7 @@ samples = sample(HMM(N, K, y, T, m), PG(50, 10));
 #####################################
 # Below are codes for visualization #
 #####################################
+
 using PyPlot, PyCall
 @pyimport matplotlib.animation as animation
 plt["style"]["use"]("ggplot")
