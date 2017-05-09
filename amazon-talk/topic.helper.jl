@@ -33,3 +33,21 @@ samples2visdata(samples) = begin
       "term_frequency" => freq
   )
 end
+
+using Gadfly
+using DataFrames
+Gadfly.push_theme(:dark)
+
+makerectbinplot(samples, fn) = begin
+  K = topicdata["K"]
+  V = topicdata["V"]
+
+  ϕarr = mean(samples[:ϕ])
+  ϕ = [ϕarr[1]'; ϕarr[2]']
+
+  df = DataFrame(Topic = vec(repmat(collect(1:K)', V, 1)), Word = vec(repmat(collect(1:V)', 1, K)), Probability = vec(ϕ))
+
+  p = plot(df,x=:Word, y=:Topic, color=:Probability, Geom.rectbin)
+
+  draw(PNG("$fn.png", 6inch, 4.5inch), p)
+end

@@ -36,7 +36,7 @@ include("topic.data.jl");
 end
 
 # Collect 1000 samples using HMC with Dual Averaging
-samples = sample(LDA(data=topicdata), Gibbs(250, PG(50, 1, :z), HMCDA(100, 0.1, 0.3, :θ, :ϕ)))
+samples = sample(LDA(data=topicdata), Gibbs(1000, PG(50, 1, :z), HMCDA(100, 0.1, 0.3, :θ, :ϕ)))
 
 # Samples can be got and used like below
 ϕs = samples[:ϕ][1:200]   # fetch first 200 samples for ϕ
@@ -50,3 +50,5 @@ ldaresult = samples2visdata(samples)
 open("/home/kai/projects/Turing-exps/amazon-talk/LDA.result.json", "w") do f
     JSON.print(f, ldaresult)
 end
+
+makerectbinplot(samples, "LDA")
