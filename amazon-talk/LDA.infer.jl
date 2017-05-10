@@ -31,7 +31,11 @@ include("topic.data.jl")      # load toy dataset
   end
 end
 
-# Collect 1000 samples using a compositional Gibbs sampler
+# Collect 1000 samples using a compositional Gibbs sampler which combines
+# - Hamiltonian Monte Carlo with Dual Averaging for θ and ϕ
+#   * adaptation-step-num 200, target-accept-rate 0.65 and length 1.5 for HMCDA; 1 iteration in each Gibbs
+# - Particle Gibbs for discrete variable z
+#   * 50 particles are used for PG; 1 iteration in each Gibbs
 samples = sample(
   LDA(data=topicdata),
   Gibbs(1000, PG(50, 1, :z), HMCDA(200, 0.65, 1.5, :θ, :ϕ))
