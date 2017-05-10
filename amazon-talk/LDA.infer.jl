@@ -2,14 +2,10 @@ using Distributions, Turing   # load packages
 include("topic.data.jl")      # load toy dataset
 
 # Define the LDA model with parameters:
-#   K   - topic num
-#   V   - vocabulary
-#   M   - doc num
-#   N   - total number of words
-#   w   - word instances
-#   doc - doc instances
-#   β   - topic prior
-#   α   - word prior
+#   K   - topic num         w   - word instances
+#   V   - vocabulary      doc   - doc instances
+#   M   - doc num           β   - topic prior
+#   N   - count of words    α   - word prior
 @model LDA(K, V, M, N, w, doc, β, α) = begin
   θ = Vector{Vector{Real}}(M)
   for m = 1:M
@@ -32,10 +28,10 @@ include("topic.data.jl")      # load toy dataset
 end
 
 # Collect 1000 samples using a compositional Gibbs sampler which combines
-# - Hamiltonian Monte Carlo with Dual Averaging for θ and ϕ
-#   * adaptation-step-num 200, target-accept-rate 0.65 and length 1.5 for HMCDA; 1 iteration in each Gibbs
 # - Particle Gibbs for discrete variable z
 #   * 50 particles are used for PG; 1 iteration in each Gibbs
+# - Hamiltonian Monte Carlo with Dual Averaging for θ and ϕ
+#   * adaptation-step-num 200, target-accept-rate 0.65 and length 1.5 for HMCDA; 1 iteration in each Gibbs
 samples = sample(
   LDA(data=topicdata),
   Gibbs(1000, PG(50, 1, :z), HMCDA(200, 0.65, 1.5, :θ, :ϕ))

@@ -20,7 +20,7 @@ include("topic.data1.jl")     # load toy dataset
   end
 
   for m = 1:M
-    z[m] ~ Categorical(θ)
+    z[m] ~ Categorical(θ)   # z here is provided
   end
 
   for n = 1:N
