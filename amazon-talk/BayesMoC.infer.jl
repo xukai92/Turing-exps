@@ -30,7 +30,7 @@ end
 
 # Collect 1000 samples using a compositional Gibbs sampler which combines
 # - Hamiltonian Monte Carlo with Dual Averaging for θ and ϕ
-#   * step-size 0.1 and length 0.3 for HMCdA; 1 iteration in each Gibbs
+#   * step-size 0.1 and length 0.3 for HMCDA; 1 iteration in each Gibbs
 # - Particle Gibbs for discrete variable s
 #   * 50 particles are used for PG; 1 iteration in each Gibbs
 samples = sample(

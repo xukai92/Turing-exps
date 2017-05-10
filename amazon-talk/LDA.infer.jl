@@ -31,7 +31,7 @@ include("topic.data.jl")      # load toy dataset
   end
 end
 
-# Collect 1000 samples using HMC with Dual Averaging
+# Collect 1000 samples using a compositional Gibbs sampler
 samples = sample(
   LDA(data=topicdata),
   Gibbs(1000, PG(50, 1, :z), HMCDA(100, 0.1, 0.3, :θ, :ϕ))
