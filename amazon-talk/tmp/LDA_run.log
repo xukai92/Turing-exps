@@ -26,15 +26,15 @@ data
   file = LDA_1.data.R
 init = 2 (Default)
 random
-  seed = 4189522076
+  seed = 4213283101
 output
   file = LDA_samples_1.csv
   diagnostic_file =  (Default)
   refresh = 100 (Default)
 
 
-Gradient evaluation took 0.000105 seconds
-1000 transitions using 10 leapfrog steps per transition would take 1.05 seconds.
+Gradient evaluation took 0.000227 seconds
+1000 transitions using 10 leapfrog steps per transition would take 2.27 seconds.
 Adjust your expectations accordingly!
 
 
@@ -61,7 +61,7 @@ Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Iteration: 1900 / 2000 [ 95%]  (Sampling)
 Iteration: 2000 / 2000 [100%]  (Sampling)
 
- Elapsed Time: 2.71197 seconds (Warm-up)
-               2.10158 seconds (Sampling)
-               4.81355 seconds (Total)
+ Elapsed Time: 23.1356 seconds (Warm-up)
+               17.9409 seconds (Sampling)
+               41.0764 seconds (Total)
 

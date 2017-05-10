@@ -1,35 +1,3 @@
-using Distributions
-using Turing
-using Stan
-
-const ldastanmodel = "
-data {
-  int<lower=2> K;               // num topics
-  int<lower=2> V;               // num words
-  int<lower=1> M;               // num docs
-  int<lower=1> N;               // total word instances
-  int<lower=1,upper=V> w[N];    // word n
-  int<lower=1,upper=M> doc[N];  // doc ID for word n
-  vector<lower=0>[K] alpha;     // topic prior
-  vector<lower=0>[V] beta;      // word prior
-}
-parameters {
-  simplex[K] theta[M];   // topic dist for doc m
-  simplex[V] phi[K];     // word dist for topic k
-}
-model {
-  for (m in 1:M)
-    theta[m] ~ dirichlet(alpha);  // prior
-  for (k in 1:K)
-    phi[k] ~ dirichlet(beta);     // prior
-  for (n in 1:N) {
-    real gamma[K];
-    for (k in 1:K)
-      gamma[k] <- log(theta[doc[n],k]) + log(phi[k,w[n]]);
-    increment_log_prob(log_sum_exp(gamma));  // likelihood
-  }
-}
-"
 doc = [1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3,
   3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4,
   4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6,
@@ -199,7 +167,7 @@ doc = filter(d -> d <= M, doc)
 
 N = length(doc)
 
-const ldastandata = [
+const topicdata =
 Dict(
   "K" => 4,
   "V" => 10,
@@ -331,48 +299,6 @@ Dict(
     3, 7, 5, 2, 1, 7, 5, 5, 9, 9, 2, 2, 2, 5, 5, 1,
     7, 1, 7, 2, 4, 7, 7, 9, 1, 7, 9][1:N],
   "doc" => doc,
-  "alpha" => [1, 1, 1, 1],
-  "beta" => [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+  "α" => [1, 1, 1, 1],
+  "β" => [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 )
-]
-
-stan_model_name = "LDA"
-ldastan = Stanmodel(Sample(save_warmup=true), name=stan_model_name, model=ldastanmodel, nchains=1);
-
-lda_stan_sim = stan(ldastan, ldastandata, CmdStanDir=CMDSTAN_HOME, summary=false);
-lda_stan_sim = Stan.read_stanfit_warmup_samples(ldastan)
-# lda_stan_sim.names
-K = ldastandata[1]["K"]
-V = ldastandata[1]["V"]
-
-lda_stan_d_raw = Dict()
-for i = 1:K, j = 1:V
-  lda_stan_d_raw["phi[$i][$j]"] = lda_stan_sim[1:1000, ["phi.$i.$j"], :].value[:]
-end
-
-lda_stan_d = Dict()
-for i = 1:K
-  lda_stan_d["phi[$i]"] = [[lda_stan_d_raw["phi[$i][$k]"][j] for k = 1:V] for j = 1:1000]
-end
-
-K = ldastandata[1]["K"]
-V = ldastandata[1]["V"]
-
-using Gadfly
-using DataFrames
-Gadfly.push_theme(:dark)
-
-makerectbinplot(i, fn) = begin
-
-  ϕ = [mean(lda_stan_d["phi[1]"][1:i])'; mean(lda_stan_d["phi[2]"][1:i])'; mean(lda_stan_d["phi[3]"][1:i])'; mean(lda_stan_d["phi[4]"][1:i])']
-
-  df = DataFrame(Topic = vec(repmat(collect(1:K)', V, 1)), Word = vec(repmat(collect(1:V)', 1, K)), Probability = vec(ϕ))
-
-  p = plot(df,x=:Word, y=:Topic, color=:Probability, Geom.rectbin)
-
-  draw(PNG("$fn$i.png", 6inch, 4.5inch), p)
-end
-
-for i = 1:length(lda_stan_d["phi[1]"])
-  makerectbinplot(i, "frames/LDA-stan")
-end

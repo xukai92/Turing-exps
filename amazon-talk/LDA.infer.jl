@@ -1,5 +1,5 @@
 using Distributions, Turing   # load packages
-include("topic.data.jl")      # load toy dataset
+include("topic.data3.jl")      # load toy dataset
 
 # Define the LDA model with parameters:
 #   K   - topic num         w   - word instances
@@ -43,19 +43,26 @@ samples = sample(
 # Below are codes for visualization #
 #####################################
 
-# Samples can be got and used like below
-ϕs = samples[:ϕ][1:200]   # fetch first 200 samples for ϕ
+K = topicdata["K"]
+V = topicdata["V"]
 
-# Usually the mean of samples are used learning result, e.g. ϕ = Eᵢ[ϕᵢ]
-ϕ = mean(samples[:ϕ])
+using Gadfly
+using DataFrames
+Gadfly.push_theme(:dark)
 
-# Save result for vis
-include("topic.helper.jl")
-# ldaresult = samples2visdata(samples)
-# open("/home/kai/projects/Turing-exps/amazon-talk/LDA.result.json", "w") do f
-#     JSON.print(f, ldaresult)
-# end
+makerectbinplot(i, fn) = begin
+
+  ϕarr = mean(samples[:ϕ][1:i])
+  ϕ = [ϕarr[1]'; ϕarr[2]'; ϕarr[3]'; ϕarr[4]']
+
+
+  df = DataFrame(Topic = vec(repmat(collect(1:K)', V, 1)), Word = vec(repmat(collect(1:V)', 1, K)), Probability = vec(ϕ))
+
+  p = plot(df,x=:Word, y=:Topic, color=:Probability, Geom.rectbin)
+
+  draw(PNG("$fn$i.png", 6inch, 4.5inch), p)
+end
 
 for i = 1:length(samples[:ϕ])
-  makerectbinplot(samples, i, "frames/LDA")
+  makerectbinplot(i, "frames/LDA")
 end
