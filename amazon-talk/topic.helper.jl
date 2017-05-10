@@ -42,7 +42,7 @@ makerectbinplot(samples, i, fn) = begin
   K = topicdata["K"]
   V = topicdata["V"]
 
-  ϕarr = samples[:ϕ][i]
+  ϕarr = mean(samples[:ϕ][1:i])
   ϕ = [ϕarr[1]'; ϕarr[2]']
 
   df = DataFrame(Topic = vec(repmat(collect(1:K)', V, 1)), Word = vec(repmat(collect(1:V)', 1, K)), Probability = vec(ϕ))

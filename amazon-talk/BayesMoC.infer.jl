@@ -18,12 +18,11 @@ include("topic.data.jl")      # load toy dataset
     ϕ[k] ~ Dirichlet(β)
   end
 
-  z = tzeros(Int, N)    # Turing-safe array
-  for m = 1:M
-    z[m] ~ Categorical(θ)
-  end
-
+  z = tzeros(Int, M)    # Turing-safe array
   for n = 1:N
+    if z[doc[n]] == 0
+      z[doc[n]] ~ Categorical(θ)
+    end
     w[n] ~ Categorical(ϕ[z[doc[n]]])
   end
 end
@@ -35,7 +34,7 @@ end
 #   * 50 particles are used for PG; 1 iteration in each Gibbs
 samples = sample(
   BayesMoC(data=topicdata),
-  Gibbs(1000, PG(50, 1, :z), HMCDA(100, 0.1, 0.3, :θ, :ϕ))
+  Gibbs(1000, PG(50, 1, :z), HMCDA(200, 0.65, 1.5, :θ, :ϕ))
 )
 
 

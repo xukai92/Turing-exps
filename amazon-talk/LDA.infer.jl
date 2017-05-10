@@ -21,20 +21,15 @@ include("topic.data.jl")      # load toy dataset
     ϕ[k] ~ Dirichlet(β)
   end
 
-  z = tzeros(Int, N)    # Turing-safe array
   for n = 1:N
-    z[n] ~ Categorical(θ[doc[n]])   # z here is unkown
-  end
-
-  for n = 1:N
-    w[n] ~ Categorical(ϕ[z[doc[n]]])
+    ϕ_dot_θ = [dot(map(p -> p[i], ϕ), θ[doc[n]]) for i = 1:V]
+    w[n] ~ Categorical(ϕ_dot_θ)
   end
 end
 
-# Collect 1000 samples using a compositional Gibbs sampler
+# Collect 1000 samples using HMCDA
 samples = sample(
-  LDA(data=topicdata),
-  Gibbs(1000, PG(50, 1, :z), HMCDA(100, 0.1, 0.3, :θ, :ϕ))
+  LDA(data=topicdata), HMCDA(1000, 200, 0.65, 1.5)
 )
 
 
